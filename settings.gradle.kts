@@ -5,6 +5,4 @@ pluginManagement {
     }
 }
 
-// TODO Change the plugin name to whatever you want
-rootProject.name = "TableclothPluginBlank"
-
+rootProject.name = "Nicotine"
