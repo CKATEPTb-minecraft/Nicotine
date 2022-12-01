@@ -1,7 +1,9 @@
 package dev.ckateptb.minecraft.nicotine;
 
 import dev.ckateptb.common.tableclothcontainer.IoC;
+import dev.ckateptb.common.tableclothcontainer.container.Container;
 import dev.ckateptb.common.tableclothcontainer.event.ComponentRegisterEvent;
+import dev.ckateptb.common.tableclothcontainer.event.ThrowComponentNotFoundExceptionEvent;
 import dev.ckateptb.common.tableclothcontainer.util.FinderUtil;
 import dev.ckateptb.common.tableclothevent.EventBus;
 import dev.ckateptb.minecraft.nicotine.annotation.Schedule;
@@ -39,6 +41,21 @@ public class Nicotine extends JavaPlugin {
     }
 
     private void registerFeatures() {
+        EventBus.GLOBAL.registerEventHandler(ThrowComponentNotFoundExceptionEvent.class, event -> {
+            Class<?> clazz = event.getClazz();
+            if(Plugin.class.isAssignableFrom(clazz)) {
+                Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+                for(Plugin plugin : plugins) {
+                    if(clazz.isInstance(plugin)) {
+                        Container container = event.getContainer();
+                        container.registerBean(plugin, event.getIdentifier());
+                        event.setReturnResult(plugin);
+                        event.setCanceled(true);
+                        break;
+                    }
+                }
+            }
+        });
         EventBus.GLOBAL.registerEventHandler(ComponentRegisterEvent.class, event -> {
             Object instance = event.getInstance();
             if (instance instanceof Listener listener) {
