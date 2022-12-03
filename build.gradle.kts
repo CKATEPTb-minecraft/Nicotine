@@ -17,7 +17,7 @@ plugins {
     id("io.papermc.paperweight.userdev").version("1.3.8")
 }
 group = "dev.ckateptb.minecraft"
-version = "1.0.2-SNAPSHOT"
+version = "1.0.3-SNAPSHOT"
 
 val rootPackage = "${project.group}.${project.name.toLowerCase()}"
 val internal = "${rootPackage}.internal"
@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    implementation("dev.ckateptb.common:TableclothContainer:1.1.4-SNAPSHOT")
+    implementation("dev.ckateptb.common:TableclothContainer:1.1.5-SNAPSHOT")
     implementation("dev.ckateptb.common:TableclothEvent:1.0.1-SNAPSHOT")
     compileOnly("org.projectlombok:lombok:+")
     annotationProcessor("org.projectlombok:lombok:+")
