@@ -21,8 +21,7 @@ public class Nicotine extends JavaPlugin {
 
     public Nicotine() {
         this.registerFeatures();
-        IoC.registerBean(this);
-        IoC.scan(Nicotine.class);
+        IoC.registerBean(this, this.getClass());
     }
 
     @Override
@@ -41,8 +40,10 @@ public class Nicotine extends JavaPlugin {
     private void registerFeatures() {
         EventBus.GLOBAL.registerEventHandler(ComponentRegisterEvent.class, event -> {
             Object instance = event.getInstance();
+            Class<?> owner = event.getOwner();
+            Plugin plugin = owner.isAssignableFrom(Plugin.class) && IoC.containsBean(owner) ? (Plugin) IoC.getBean(owner) : this;
             if (instance instanceof Listener listener) {
-                this.runOnEnable(() -> Bukkit.getPluginManager().registerEvents(listener, this));
+                this.runOnEnable(() -> Bukkit.getPluginManager().registerEvents(listener, plugin));
             }
             FinderUtil.findMethods(event.getClazz(), Schedule.class).forEach(method -> {
                 try {
@@ -60,7 +61,7 @@ public class Nicotine extends JavaPlugin {
                     task.setAccessible(true);
                     this.runOnEnable(() -> {
                         try {
-                            task.invoke(scheduler, this, (Runnable) () -> {
+                            task.invoke(scheduler, plugin, (Runnable) () -> {
                                 try {
                                     method.invoke(instance);
                                 } catch (IllegalAccessException | InvocationTargetException e) {
